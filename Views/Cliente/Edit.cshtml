@@ -1,0 +1,130 @@
+﻿@{
+    ViewBag.Title = "Editar Cliente";
+}
+
+@model ClientesCRUD.Models.Cliente
+
+<main aria-labelledby="title">
+    <h2 id="title">@ViewBag.Title.</h2>
+    <h3>@ViewBag.Message</h3>
+
+    <p>
+        @Html.ActionLink("Voltar", "Index")
+    </p>
+
+    @using (Html.BeginForm("Edit", "Cliente", FormMethod.Post, new { id = "formCliente" }))
+    {
+        @Html.HiddenFor(model => model.Id)
+        @Html.ValidationSummary(true)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Nome)
+            @Html.TextBoxFor(model => model.Nome, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Nome, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Sexo)
+            @Html.DropDownListFor(model => model.Sexo, new SelectList(new[] { "Masculino", "Feminino", "Outro" }, Model.Sexo), "Selecione", new { @class = "form-control" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Endereco)
+            @Html.TextBoxFor(model => model.Endereco, new { @class = "form-control" })
+        </div>
+
+
+        <div class="form-group">
+            <h4>Telefones</h4>
+            <div id="telefones">
+                <button type="button" class="btn btn-primary" onclick="addTelefone()">Adicionar Telefone</button>
+                <br /><br />
+                @for (var i = 0; i < Model.Telefones.Count; i++)
+                {
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <input type="hidden" name="Telefones[@i].Id" value="@Model.Telefones[i].Id" />
+                        <input type="text" name="Telefones[@i].Numero" value="@Model.Telefones[i].Numero" class="form-control telefone" maxlength="15" placeholder="(00) 00000-0000" />
+                        <label>Ativo</label>
+                        <input type="checkbox" class="telefone-ativo" name="Telefones[@i].Ativo" value="true" @(Model.Telefones[i].Ativo ? "checked" : "") />
+                        <input type="hidden" name="Telefones[@i].Ativo" value="false" />
+                        <button type="button" onclick="this.parentElement.remove()" class="btn btn-sm btn-danger">Remover</button>
+                    </div>
+                }
+            </div>
+
+        </div>
+
+
+        <br /><br />
+        <input type="submit" value="Salvar" class="btn btn-primary" />
+        @Html.ActionLink("Voltar", "Index", null, new { @class = "btn btn-secondary" })
+    }
+
+    @section Scripts {
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+        <script>
+            let index = @Model.Telefones.Count;
+
+            function addTelefone() {
+                const container = document.getElementById('telefones');
+                const div = document.createElement('div');
+
+                div.setAttribute("style", "display: flex; align-items: center; gap: 10px; margin-bottom: 10px;");
+
+                // Define o estado do checkbox se for o primeiro
+                const isFirst = index === 0;
+                const checkedAttr = isFirst ? 'checked' : '';
+
+                div.innerHTML = `
+                    <input type="text" name="Telefones[${index}].Numero" class="form-control telefone" maxlength="15" placeholder="(00) 00000-0000" />
+                    <label style="margin: 0;">Ativo</label>
+                    <input type="checkbox" class="telefone-ativo" name="Telefones[${index}].Ativo" value="true" ${checkedAttr} />
+                    <input type="hidden" name="Telefones[${index}].Ativo" value="false" />
+                    <button type="button" onclick="this.parentElement.remove()" class="btn btn-sm btn-danger">Remover</button>
+                `;
+
+                container.appendChild(div);
+
+                // Aplica máscara
+                $(div).find('.telefone').mask('(00) 00000-0000');
+
+                // Comportamento exclusivo dos checkboxes
+                $(div).find('.telefone-ativo').on('change', function () {
+                    if (this.checked) {
+                        $('.telefone-ativo').not(this).prop('checked', false);
+                    }
+                });
+
+                index++;
+            }
+
+
+            // Aplica a máscara para qualquer campo já existente na tela ao carregar
+            $(document).ready(function () {
+                $('.telefone').mask('(00) 00000-0000');
+            });
+
+
+            document.getElementById("formCliente").addEventListener("submit", function (e) {
+                const telefoneContainers = document.querySelectorAll('#telefones > div');
+                let isValid = true;
+                let msgErro = "";
+
+                telefoneContainers.forEach(container => {
+                    const isChecked = container.querySelector('.telefone-ativo')?.checked;
+                    const numero = container.querySelector('.telefone')?.value.trim();
+
+                    if (isChecked && (!numero || numero === "")) {
+                        isValid = false;
+                        msgErro = "O telefone marcado como ativo deve ter um número preenchido.";
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    alert(msgErro);
+                }
+            });
+        </script>
+    }
+</main>

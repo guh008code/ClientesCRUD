@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClientesCRUD" namespace="ClientesCRUD.Models">
+
+  <class name="Cliente" table="Cliente">
+    <id name="Id">
+      <generator class="identity"/>
+    </id>
+
+    <property name="Nome" />
+    <property name="Sexo" />
+    <property name="Endereco" />
+
+    <bag name="Telefones" cascade="all-delete-orphan" inverse="true" lazy="false">
+      <key column="ClienteId"/>
+      <one-to-many class="ClientesCRUD.Models.Telefone" />
+    </bag>
+  </class>
+
+</hibernate-mapping>

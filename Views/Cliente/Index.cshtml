@@ -1,0 +1,51 @@
+﻿@{
+    ViewBag.Title = "Listar Clientes";
+}
+
+@model IEnumerable<ClientesCRUD.Models.Cliente>
+
+<main aria-labelledby="title">
+    <h2 id="title">@ViewBag.Title.</h2>
+    <h3>@ViewBag.Message</h3>
+
+    <p>
+        @Html.ActionLink("Adicionar Cliente", "Create", null, new { @class = "btn btn-primary" })
+    </p>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Sexo</th>
+                <th>Endereço</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Nome</td>
+                        <td>@item.Sexo</td>
+                        <td>@item.Endereco</td>
+                        <td>
+                            @Html.ActionLink("Detalhes", "Details", new { id = item.Id }) |
+                            @Html.ActionLink("Editar", "Edit", new { id = item.Id }) |
+                            @Html.ActionLink("Excluir", "Delete", new { id = item.Id })
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4">Nenhum cliente cadastrado.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+</main>

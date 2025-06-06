@@ -1,0 +1,42 @@
+﻿@{
+    ViewBag.Title = "Detalhes do Cliente";
+}
+
+@model ClientesCRUD.Models.Cliente
+
+<main aria-labelledby="title">
+    <h2 id="title">@ViewBag.Title.</h2>
+    <h3>@ViewBag.Message</h3>
+
+    <div>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">Nome:</dt>
+            <dd class="col-sm-10">@Model.Nome</dd>
+
+            <dt class="col-sm-2">Sexo:</dt>
+            <dd class="col-sm-10">@Model.Sexo</dd>
+
+            <dt class="col-sm-2">Endereço:</dt>
+            <dd class="col-sm-10">@Model.Endereco</dd>
+
+            <dt class="col-sm-2">Telefones:</dt>
+            <dd class="col-sm-10">
+                <ul>
+                    @foreach (var tel in Model.Telefones)
+                    {
+                        <li>@tel.Numero @(tel.Ativo ? "(Ativo)" : "")</li>
+                    }
+                </ul>
+            </dd>
+        </dl>
+    </div>
+
+    <p>
+
+        @Html.ActionLink("Editar", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
+
+        @Html.ActionLink("Voltar", "Index", null, new { @class = "btn btn-secondary" })
+
+    </p>
+</main>
